@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<div class="pagehead"><div><h1>Commodity / Item Management</h1><div class="muted">Add new ration commodities and maintain the existing item master.</div></div></div>
+<div class="card"><h2>Add New Item</h2><form method="post" class="formgrid"><div><label>Item name (include unit if needed) *</label><input name="commodity" placeholder="Example: Ragi (kg)" required></div><div><button>Add Item</button></div></form></div>
+<div class="card"><h2>Items ({{ rows|length }})</h2><div class="tablewrap"><table><thead><tr><th>Item name</th><th>Linked records</th><th>Actions</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.commodity }}</td><td>{{ r.used_count }}</td><td><div class="actions">
+<details><summary class="btn secondary">Edit</summary><form method="post" action="{{ url_for('edit_item',old_name=r.commodity) }}" style="padding:10px;min-width:220px"><label>New item name</label><input name="commodity" value="{{ r.commodity }}" required><button style="margin-top:8px">Save</button></form></details>
+<form method="post" action="{{ url_for('delete_item',name=r.commodity) }}" onsubmit="return confirm('Delete this item?')"><button class="danger">Delete</button></form></div></td></tr>{% endfor %}
+</tbody></table></div><p class="muted">Items with dispatch or allocation history cannot be deleted, to protect reports. You can rename them instead.</p></div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block content %}
+<div class="pagehead"><div><h1>Shop Management</h1><div class="muted">Add, edit and view FPS shops. Existing 201 shop records are retained.</div></div></div>
+<div class="card"><h2>Add New Shop</h2><form method="post" class="formgrid">
+<div><label>FPS Code *</label><input name="fps_code" required></div><div><label>FPS Name *</label><input name="fps_name" required></div>
+<div><label>Godown Name</label><input name="godown_name"></div><div><label>Godown Code</label><input name="godown_code"></div><div><button type="submit">Add Shop</button></div></form></div>
+<div class="card"><div class="pagehead"><h2>Existing Shops ({{ rows|length }})</h2><input id="filter" style="max-width:260px" placeholder="Search shops..." oninput="filterRows()"></div>
+<div class="tablewrap"><table id="shops"><thead><tr><th>FPS Code</th><th>FPS Name</th><th>Godown Name</th><th>Godown Code</th><th>Actions</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.fps_code }}</td><td>{{ r.fps_name }}</td><td>{{ r.godown_name or '' }}</td><td>{{ r.godown_code or '' }}</td><td><div class="actions">
+<details><summary class="btn secondary">Edit</summary><form method="post" action="{{ url_for('edit_shop',fps_code=r.fps_code) }}" style="padding:10px;min-width:230px">
+<label>FPS Name</label><input name="fps_name" value="{{ r.fps_name }}" required><label>Godown Name</label><input name="godown_name" value="{{ r.godown_name or '' }}"><label>Godown Code</label><input name="godown_code" value="{{ r.godown_code or '' }}"><button style="margin-top:8px">Save</button></form></details>
+<form method="post" action="{{ url_for('delete_shop',fps_code=r.fps_code) }}" onsubmit="return confirm('Delete this shop? This is allowed only when no dispatch/allocation history is linked.')"><button class="danger">Delete</button></form></div></td></tr>{% endfor %}
+</tbody></table></div></div>
+<script>function filterRows(){let q=document.getElementById('filter').value.toLowerCase();document.querySelectorAll('#shops tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')}</script>
+{% endblock %}

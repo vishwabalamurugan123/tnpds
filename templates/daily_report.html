@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Daily Shop-wise Dispatch Details · TNPDS PANRUTI TALUK{% endblock %}
+{% block content %}
+<style>
+.report-head{text-align:center;margin:8px 0 14px}.report-head h1{font-size:21px;margin:0}.report-head h2{font-size:17px;margin:4px 0}.report-meta{display:flex;justify-content:space-between;gap:12px;margin:10px 0 14px}.report-summary{display:flex;gap:24px;margin:10px 0;font-weight:600}.print-table{border-collapse:collapse;width:100%;font-size:12px}.print-table th,.print-table td{border:1px solid #555;padding:6px 7px}.print-table thead th{text-align:center;white-space:normal;background:#e9edf2}.print-table td.num{text-align:right;white-space:nowrap}.print-table td.center{text-align:center}.print-table tfoot{font-weight:bold;background:#f1f1f1}.print-table .shop-name{text-align:left;min-width:130px}.no-data{text-align:center;padding:22px!important}
+@media print{
+ @page{size:A4 landscape;margin:8mm}
+ body{background:#fff!important;color:#000!important;font-size:9px!important}header,.pagehead,.no-print,.flash{display:none!important}
+ main{max-width:none!important;margin:0!important;padding:0!important}.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+ .report-head{margin:0 0 8px}.report-head h1{font-size:16px}.report-head h2{font-size:13px}.report-meta,.report-summary{font-size:9px;margin:5px 0}
+ .print-table{font-size:8px!important;width:100%;table-layout:auto}.print-table th,.print-table td{padding:3px 4px!important;border:1px solid #555!important}.print-table th{background:#e9edf2!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ thead{display:table-header-group}tfoot{display:table-row-group}tr{page-break-inside:avoid;break-inside:avoid}
+}
+</style>
+<div class="pagehead no-print"><div><h1>Daily Dispatch Print</h1><div class="muted">One row per shop, with every commodity shown in its own column.</div></div></div>
+<div class="card">
+  <form method="get" class="formgrid no-print" style="margin-bottom:18px">
+    <div><label>Dispatch date</label><input type="date" name="dispatch_date" value="{{ report_date }}" required></div>
+    <div class="actions"><button type="submit">View Report</button><button type="button" class="success" onclick="window.print()">Print / Save as PDF</button></div>
+  </form>
+  <div class="report-head">
+    <h1>TNPDS – PANRUTI TALUK</h1>
+    <h2>SHOP-WISE DISPATCH DETAILS</h2>
+    <div><strong>Dispatch Date: {{ report_date }}</strong></div>
+  </div>
+  <div class="report-meta"><span>Generated: {{ generated_at }}</span><span>Daily Dispatch Statement</span></div>
+  <div class="report-summary"><span>Total Shops Dispatched: {{ summary.shop_count }}</span><span>Grand Total Quantity: {{ '%.2f'|format(summary.grand_total) }}</span></div>
+  <div class="tablewrap">
+    <table class="print-table">
+      <thead><tr>
+        <th>S.No.</th><th>Godown</th><th>FPS Code</th><th>Shop Name</th>
+        {% for commodity in commodities %}<th>{{ commodity }}</th>{% endfor %}
+        <th>Total</th>
+      </tr></thead>
+      <tbody>
+        {% for shop in shops %}
+        <tr>
+          <td class="center">{{ loop.index }}</td><td class="center">{{ shop.godown }}</td>
+          <td class="center">{{ shop.fps_code }}</td><td class="shop-name">{{ shop.fps_name }}</td>
+          {% for commodity in commodities %}<td class="num">{% if shop.quantities[commodity] %}{{ '%.2f'|format(shop.quantities[commodity]) }}{% else %}-{% endif %}</td>{% endfor %}
+          <td class="num">{{ '%.2f'|format(shop.total) }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="no-data" colspan="{{ commodities|length + 5 }}">No dispatch entries found for this date.</td></tr>
+        {% endfor %}
+      </tbody>
+      {% if shops %}<tfoot><tr><td colspan="4" style="text-align:center">TOTAL</td>
+        {% for commodity in commodities %}<td class="num">{{ '%.2f'|format(totals[commodity]) }}</td>{% endfor %}
+        <td class="num">{{ '%.2f'|format(summary.grand_total) }}</td></tr></tfoot>{% endif %}
+    </table>
+  </div>
+  <div style="display:flex;justify-content:space-between;gap:20px;margin-top:35px"><div>Prepared By: __________________</div><div>Checked By: __________________</div><div>Signature: __________________</div></div>
+</div>
+{% endblock %}

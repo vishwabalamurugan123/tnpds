@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}TNPDS · PANRUTI TALUK{% endblock %}</title>
+<style>
+:root{--navy:#15304b;--blue:#1769aa;--bg:#f3f6fa;--text:#1d2939;--muted:#667085;--line:#e3e8ef;--green:#16845b;--red:#bd3434}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.5 Arial,sans-serif;color:var(--text)}
+header{background:var(--navy);color:white;padding:17px 4%;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+header strong{font-size:20px}header small{display:block;color:#cbd8e5}
+nav{display:flex;gap:8px;flex-wrap:wrap}nav a{color:white;text-decoration:none;padding:8px 11px;border-radius:7px;font-size:14px}nav a:hover{background:#294966}
+main{max-width:1200px;margin:28px auto;padding:0 18px}.pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:25px;margin:0 0 5px}h2{font-size:18px;margin:0 0 14px}.muted{color:var(--muted)}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:20px;margin-bottom:18px;box-shadow:0 2px 7px #10243b08}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}.stat{background:white;border:1px solid var(--line);border-radius:12px;padding:18px}.stat b{font-size:28px;display:block;color:var(--navy)}
+form.inline{display:inline}.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+label{font-weight:600;font-size:13px;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #cbd5e1;border-radius:7px;font:inherit;background:white}button,.btn{border:0;background:var(--blue);color:white;padding:10px 14px;border-radius:7px;cursor:pointer;text-decoration:none;display:inline-block;font:inherit;font-weight:600}button:hover,.btn:hover{filter:brightness(.93)}.danger{background:var(--red)}.secondary{background:#536579}.success{background:var(--green)}
+table{width:100%;border-collapse:collapse;background:white}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f7f9fc;font-size:13px;color:#475467}td form{min-width:0}.tablewrap{overflow-x:auto}
+.flash{padding:12px 14px;border-radius:8px;margin:10px 0 16px;background:#e8f5ef;color:#126342}.flash.error{background:#fff0f0;color:#9f2525}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.note{background:#fff8e7;border:1px solid #f2dfaa;padding:12px;border-radius:8px;color:#72551b}
+@media(max-width:650px){header{align-items:flex-start}nav a{padding:7px 8px}main{margin:18px auto}.card{padding:14px}th,td{padding:8px;font-size:13px}}
+</style></head><body>
+<header><div><strong>TNPDS · PANRUTI TALUK</strong><small>Local shop, commodity and dispatch management</small></div>
+<nav><a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('shops') }}">Shops</a><a href="{{ url_for('items') }}">Items</a><a href="{{ url_for('dispatch') }}">Daily Dispatch</a><a href="{{ url_for('daily_report') }}">Print Daily Report</a><a href="{{ url_for('upload') }}">Upload Allocation</a><a href="{{ url_for('balances') }}">Balances</a><a href="{{ url_for('backup') }}">Backup</a><a href="{{ url_for('restore') }}">Restore</a></nav></header>
+<main>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+{% block content %}{% endblock %}
+</main></body></html>

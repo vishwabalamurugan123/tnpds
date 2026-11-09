@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>Daily Advance Dispatch</h1><div class="muted">Select one FPS shop and enter all commodities before saving once.</div></div></div>
+<div class="card">
+<h2>One Shop · Multiple Commodities · One Save</h2>
+<form method="post" id="dispatchForm">
+<div class="formgrid">
+<div><label>Dispatch date *</label><input type="date" name="dispatch_date" value="{{ today }}" required></div>
+<div><label>FPS Shop *</label><select name="fps_code" required><option value="">Choose one shop</option>{% for s in shops %}<option value="{{ s.fps_code }}">{{ s.fps_code }} · {{ s.fps_name }}</option>{% endfor %}</select></div>
+<div><label>Challan number (common)</label><input name="challan"></div>
+<div><label>Remarks (common)</label><input name="remarks"></div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:22px 0 10px"><h2 style="margin:0">Commodity quantities</h2><button type="button" class="secondary" onclick="addCommodityRow()">+ Add another commodity</button></div>
+<div class="tablewrap"><table><thead><tr><th style="min-width:220px">Commodity</th><th style="min-width:150px">Quantity</th><th>Unit</th><th>Action</th></tr></thead>
+<tbody id="commodityRows"><tr>
+<td><select name="commodity[]" required><option value="">Choose item</option>{% for c in commodities %}<option value="{{ c.commodity }}">{{ c.commodity }}</option>{% endfor %}</select></td>
+<td><input type="number" name="quantity[]" min="0" step="0.001" placeholder="Enter quantity" required></td><td class="muted">As shown in item name</td><td><button type="button" class="danger" onclick="removeCommodityRow(this)" disabled>Remove</button></td>
+</tr></tbody></table></div>
+<p class="muted">Choose a different commodity on each row. All rows save together for this shop and date.</p>
+<button type="submit" onclick="return confirm('Save all commodity quantities for this shop together?')">Save All Entries</button>
+</form></div>
+<div class="card"><div class="pagehead"><div><h2>Recent Dispatch Entries</h2><div class="muted">Delete only the incorrect quantity row. Other entries remain unchanged.</div></div><input id="dispatchFilter" style="max-width:260px" placeholder="Search shop or commodity..." oninput="filterDispatch()"></div>
+<div class="tablewrap"><table id="dispatchTable"><thead><tr><th>Date</th><th>FPS Code</th><th>Shop</th><th>Commodity</th><th>Quantity</th><th>Challan</th><th>Remarks</th><th>Action</th></tr></thead><tbody>
+{% for r in recent %}<tr><td>{{ r.dispatch_date }}</td><td>{{ r.fps_code }}</td><td>{{ r.fps_name }}</td><td>{{ r.commodity }}</td><td>{{ r.quantity }}</td><td>{{ r.challan }}</td><td>{{ r.remarks }}</td>
+<td><form method="post" action="{{ url_for('delete_dispatch',dispatch_id=r.id) }}" onsubmit="return confirm('Delete this {{ r.commodity }} entry with quantity {{ r.quantity }}?')"><button class="danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="8">No dispatch entries yet.</td></tr>{% endfor %}
+</tbody></table></div></div>
+<script>
+const commodityOptions = `{% for c in commodities %}<option value="{{ c.commodity|e }}">{{ c.commodity|e }}</option>{% endfor %}`;
+function addCommodityRow(){const tr=document.createElement('tr');tr.innerHTML=`<td><select name="commodity[]" required><option value="">Choose item</option>${commodityOptions}</select></td><td><input type="number" name="quantity[]" min="0" step="0.001" placeholder="Enter quantity" required></td><td class="muted">As shown in item name</td><td><button type="button" class="danger" onclick="removeCommodityRow(this)">Remove</button></td>`;document.getElementById('commodityRows').appendChild(tr);updateRemoveButtons();}
+function removeCommodityRow(btn){if(document.querySelectorAll('#commodityRows tr').length>1){btn.closest('tr').remove();updateRemoveButtons();}}
+function updateRemoveButtons(){const bs=document.querySelectorAll('#commodityRows button');bs.forEach(b=>b.disabled=bs.length===1);}
+function filterDispatch(){const q=document.getElementById('dispatchFilter').value.toLowerCase();document.querySelectorAll('#dispatchTable tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none');}
+</script>
+{% endblock %}

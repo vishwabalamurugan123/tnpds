@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block content %}
+<div class="pagehead"><div><h1>Dashboard</h1><div class="muted">Panruti Taluk ration dispatch overview · {{ month }}</div></div><a class="btn" href="{{ url_for('backup') }}">Download Backup</a></div>
+<div class="grid">
+<div class="stat"><span class="muted">Total Shops</span><b>{{ shop_count }}</b><a href="{{ url_for('shops') }}">Manage shops →</a></div>
+<div class="stat"><span class="muted">Items</span><b>{{ item_count }}</b><a href="{{ url_for('items') }}">Manage items →</a></div>
+<div class="stat"><span class="muted">Dispatch entries this month</span><b>{{ dispatch_count }}</b><a href="{{ url_for('dispatch') }}">Open dispatch →</a></div>
+<div class="stat"><span class="muted">Allocation rows this month</span><b>{{ alloc_count }}</b><a href="{{ url_for('balances',month=month) }}">View balances →</a></div>
+<div class="stat"><span class="muted">Pending allocation rows</span><b>{{ pending }}</b><a href="{{ url_for('upload') }}">Upload allocation →</a></div>
+</div>
+<div class="card"><h2>Quick actions</h2><div class="actions"><a class="btn" href="{{ url_for('shops') }}">Add / Manage Shops</a><a class="btn" href="{{ url_for('items') }}">Add / Manage Items</a><a class="btn" href="{{ url_for('dispatch') }}">Record Dispatch</a><a class="btn secondary" href="{{ url_for('restore') }}">Restore Backup</a></div></div>
+{% endblock %}
